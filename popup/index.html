@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grablio</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Courgette&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="header-container">
+        <div class="logo">
+          <h1>Grablio</h1>
+        </div>
+        <button id="settings-toggle" class="header-action-btn" title="Appearance Settings" aria-label="Open settings">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="stats-card" aria-label="Scan summary">
+        <div class="stat">
+          <span class="stat-label">Images Found</span>
+          <span id="image-count" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Status</span>
+          <span id="status-text" class="stat-value">Loading…</span>
+        </div>
+      </section>
+
+      <div id="session-badge" class="session-badge hidden">
+        <span class="pulse-dot"></span>
+        <span>Multi-Page Session Active</span>
+      </div>
+
+      <section class="preview-section" aria-label="Detected images">
+        <div class="section-header">
+          <div class="selection-actions">
+            <button id="select-all-btn" class="text-link-btn">Select All</button>
+            <span class="divider" aria-hidden="true">·</span>
+            <button id="unselect-all-btn" class="text-link-btn">Unselect All</button>
+          </div>
+          <span id="selected-count" class="selected-count">0 selected</span>
+        </div>
+        <div class="action-bar">
+          <button id="download-btn" class="primary-btn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span id="download-btn-label">Download as ZIP</span>
+          </button>
+        </div>
+        <div id="image-grid" class="image-grid" role="list" aria-label="Image gallery">
+          <!-- Image cards are injected here -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" class="back-to-top hidden" title="Back to top" aria-label="Scroll back to top">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <!-- Settings Panel Overlay -->
+  <div id="settings-panel" class="settings-overlay hidden" role="dialog" aria-label="Settings">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h2>Appearance</h2>
+        <button id="settings-close" class="close-btn" title="Close Settings" aria-label="Close settings">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="settings-body">
+        <div class="setting-group">
+          <label class="setting-label">Preset Themes</label>
+          <div class="theme-presets">
+            <button class="theme-preset-btn active" data-theme="indigo" title="Indigo accent on onyx">
+              <span class="swatch" style="background: linear-gradient(135deg, #0d0d10, #6366f1);"></span>
+              Onyx
+            </button>
+            <button class="theme-preset-btn" data-theme="dark" title="Violet accent on graphite">
+              <span class="swatch" style="background: linear-gradient(135deg, #111114, #8b5cf6);"></span>
+              Graphite
+            </button>
+            <button class="theme-preset-btn" data-theme="cyber" title="Monochrome on snow white">
+              <span class="swatch" style="background: linear-gradient(135deg, #ffffff, #0a0a0a);"></span>
+              Snow
+            </button>
+            <button class="theme-preset-btn" data-theme="forest" title="Emerald accent on carbon">
+              <span class="swatch" style="background: linear-gradient(135deg, #0e100f, #34d399);"></span>
+              Carbon
+            </button>
+            <button class="theme-preset-btn" data-theme="rose" title="Rose accent on linen">
+              <span class="swatch" style="background: linear-gradient(135deg, #fbf9f8, #f43f5e);"></span>
+              Linen
+            </button>
+            <button class="theme-preset-btn" data-theme="glass" title="Frosted liquid glass">
+              <span class="swatch" style="background: linear-gradient(135deg, rgba(255,255,255,0.55), #38bdf8);"></span>
+              Glass
+            </button>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label" for="accent-color-picker">Custom Accent</label>
+          <div class="control-row">
+            <input type="color" id="accent-color-picker" value="#e85d8b">
+            <span class="control-value" id="accent-color-val">#e85d8b</span>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label" for="radius-slider">Corner Roundness</label>
+          <div class="control-row">
+            <input type="range" id="radius-slider" min="0" max="24" value="18" step="2">
+            <span class="control-value" id="radius-val">18px</span>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label" for="font-selector">Theme Font</label>
+          <div class="custom-dropdown" id="font-dropdown">
+            <button type="button" id="font-selector" class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+              <span class="dropdown-value">Plus Jakarta Sans</span>
+              <svg class="dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <ul class="dropdown-menu" id="font-menu" role="listbox" tabindex="-1" aria-label="Theme Font">
+              <li class="dropdown-option" role="option" data-value="inter" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                <span class="option-label">Plus Jakarta Sans</span>
+                <svg class="check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </li>
+              <li class="dropdown-option" role="option" data-value="outfit" style="font-family: 'Outfit', sans-serif;">
+                <span class="option-label">Outfit</span>
+                <svg class="check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </li>
+              <li class="dropdown-option" role="option" data-value="playfair" style="font-family: 'Space Grotesk', sans-serif;">
+                <span class="option-label">Space Grotesk</span>
+                <svg class="check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </li>
+              <li class="dropdown-option" role="option" data-value="mono" style="font-family: 'JetBrains Mono', monospace;">
+                <span class="option-label">JetBrains Mono</span>
+                <svg class="check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </li>
+              <li class="dropdown-option" role="option" data-value="system" style="font-family: system-ui, sans-serif;">
+                <span class="option-label">System Default</span>
+                <svg class="check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="setting-group session-mode-group">
+          <div class="session-mode-header">
+            <label class="setting-label">Session Mode</label>
+            <label class="switch">
+              <input type="checkbox" id="session-mode-toggle">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <p class="crawler-desc">Accumulate images across different pages into a single download list.</p>
+          <button id="clear-session-btn" class="reset-btn hidden" style="margin-top: 8px; border-style: solid; border-color: var(--border);">
+            Clear Saved Session
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-footer">
+        <button id="settings-reset" class="reset-btn">Reset to Default</button>
+        <p id="footer-text" class="footer-text">Browser Extension • v1.0</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading" class="overlay hidden" aria-live="polite">
+    <div class="loader-content">
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="loading-text">Preparing ZIP…</p>
+      <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../lib/jszip.min.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
