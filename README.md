@@ -143,6 +143,30 @@ Yes — every image starts selected, and you can toggle individual thumbnails, o
 
 ---
 
+## 🔧 Troubleshooting
+
+**The popup shows no images.**
+Grablio can only scan regular web pages. Browser-internal pages (`chrome://`, `edge://`, `about:`, the Chrome Web Store, and other extensions' pages) are off-limits to every extension. Open a normal `http(s)` page and try again.
+
+**Some images are missing from the grid.**
+Scroll through the page once before opening the popup. Lazy-loaded images only exist in the DOM after they enter the viewport, and Grablio's content script appends them as you scroll. If an image is still missing, it may be drawn by a `<canvas>` or loaded from a cross-origin iframe — neither is exposed to the page scanner.
+
+**The ZIP downloaded but some files are absent.**
+This is almost always CORS or hotlink protection: the site serves image bytes without `Access-Control-Allow-Origin`, so the browser blocks the fetch. The status bar reports the exact count (`Saved N, M failed`). On Brave, Shields can block these fetches entirely — lower Shields for that site and rescan.
+
+**The download reports `All N failed (blocked or CORS)`.**
+Every selected image was refused by the site. Try a different host, or download that site's images manually. Grablio never bypasses access restrictions.
+
+**Images do not appear until I reopen the popup.**
+The scanner injects on demand each time the popup opens. If a page was loaded before the extension was installed or updated, refresh the tab first so the current content script is available.
+
+**My theme or session list reset.**
+Theme, session mode, and scroll position live in `chrome.storage`. Clearing site data, using a private window, or reinstalling the extension wipes that storage.
+
+Still stuck? [Open an issue](https://github.com/elliotalien/Grablio/issues) with the page URL (if it is public), your browser and version, and the exact status message Grablio showed.
+
+---
+
 ## 📄 License
 
 MIT License — feel free to use, modify, and distribute. See [LICENSE](LICENSE) for details.
