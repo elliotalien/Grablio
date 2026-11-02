@@ -167,6 +167,12 @@ Still stuck? [Open an issue](https://github.com/elliotalien/Grablio/issues) with
 
 ---
 
+## 🤝 Contributing
+
+Contributions are welcome — bug reports, docs fixes and small focused pull requests especially. Read [CONTRIBUTING.md](CONTRIBUTING.md) for the local setup (no build step: load the folder unpacked), code guidelines and the pull request checklist.
+
+---
+
 ## 📄 License
 
 MIT License — feel free to use, modify, and distribute. See [LICENSE](LICENSE) for details.
